@@ -24,7 +24,7 @@ class BaseHandler:
         raise NotImplementedError
 
 
-class SetLanguageHandler:
+class SetLanguageHandler(BaseHandler):
     greeting = 'Вітанкі. Абярыце мову.'
     options = ['Беларуская', 'Русский']
     next_state = 'location'
