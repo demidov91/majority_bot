@@ -157,6 +157,9 @@ class CommandHandler(BaseHandler):
 
 async def get_tg_active_messages(db_user: dict):
     active_messages = await get_active_messages(db_user['location'], db_user['language'])
+    if active_messages is None:
+        return
+
     for message in active_messages:
         message['method'] = 'sendMessage'
 
