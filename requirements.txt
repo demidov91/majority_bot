@@ -1,5 +1,6 @@
 aiohttp
 speaklater
 python-telegram-bot
+pymongo[srv]
 motor
 gunicorn

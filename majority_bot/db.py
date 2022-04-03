@@ -16,7 +16,7 @@ def get_connection(*, is_live: bool):
     conn_string = TEST_CONNECTION_STRING
 
     if conn_string not in _connections:
-        _connections[conn_string] = AsyncIOMotorClient(conn_string)
+        _connections[conn_string] = AsyncIOMotorClient(conn_string)['test_db']
 
     return _connections[conn_string]
 
@@ -26,7 +26,7 @@ def set_active_connection(*, is_live: bool):
 
 
 def connection() -> 'motor.core.AgnosticDatabase':
-    return _connection.get()['test_db']
+    return _connection.get()
 
 
 async def get_tg_user(user_id: int):
