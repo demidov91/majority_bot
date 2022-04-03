@@ -1,6 +1,8 @@
 import argparse
 import sys
 import asyncio
+import logging
+
 import pymongo
 
 from majority_bot.db import get_connection
@@ -14,13 +16,11 @@ async def setup_db(is_live):
     await connection['tasks'].create_index([('created_at', pymongo.DESCENDING)])
 
 
-async def set_handler(url, *, is_live):
-    await set_webhook(url, is_live=is_live, is_admin=False)
-
-
 def run():
+    logging.basicConfig(level=logging.INFO)
+
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('command', choices=['setup_db', 'set_handler'])
+    argparser.add_argument('command', choices=['setup_db', 'set_webhook'])
     argparser.add_argument('--test', action='store_true')
     argparser.add_argument('--live', action='store_true')
     argparser.add_argument('value', nargs='?')
@@ -33,8 +33,9 @@ def run():
         asyncio.run(setup_db(is_live=is_live))
         return
 
-    if args.command == 'set_handler':
-        asyncio.run(set_handler(args.value, is_live=is_live))
+    if args.command == 'set_webhook':
+        data = asyncio.run(set_webhook(args.value, is_live=is_live, is_admin=False))
+        print(data)
         return
 
     raise ValueError(sys.argv)

@@ -11,10 +11,14 @@ logger = logging.getLogger(__name__)
 _client = None
 
 
+def create_client():
+    return ClientSession('https://api.telegram.org')
+
+
 def get_client() -> ClientSession:
     global _client
     if _client is None:
-        _client = ClientSession('https://api.telegram.org/')
+        _client = create_client()
 
     return _client
 
@@ -37,17 +41,27 @@ def send_message_soon(message, *, is_live):
 
 async def _send_message(message: dict, is_live: bool):
     _key = 'live' if is_live else 'test'
-    url = f'bot{TG_TOKENS[_key]}/{message.pop("method")}'
-    response = await get_client().post(url, json=message)
-    if response.status != 200:
-        logger.error(await response.read())
+    url = f'/bot{TG_TOKENS[_key]}/{message.pop("method")}'
+
+    logger.info(url)
+
+    async with create_client() as client:
+        response = await client.post(url, json=message)
+        if response.status != 200:
+            logger.error(await response.read())
+            if response.status >= 500:
+                return None
+
+        return await response.json()
 
 
 async def set_webhook(url, *, is_live: bool, is_admin: bool):
     if is_live or is_admin:
         raise NotImplementedError
 
-    await _send_message({
+    data = await _send_message({
         'method': 'setWebhook',
-        'url': urljoin(url, f'/bot/test/user/{TEST_SECURE_URL}/'),
+        'url': urljoin(url, f'/bot/test/user/{TEST_SECURE_URL}'),
     }, is_live=is_live)
+
+    return data
