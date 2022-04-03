@@ -3,7 +3,14 @@ from telegram import Update, User, Message
 
 from majority_bot.db import set_active_connection, get_tg_user
 from majority_bot.exceptions import UnexpectedResponseError
-from majority_bot.handlers import SetLanguageHandler, SetLocationHandler, PersonalTaskHandler, CommandHandler, TakeRestHandler
+from majority_bot.handlers import (
+    SetLanguageHandler,
+    SetLocationHandler,
+    PersonalTaskHandler,
+    CommandHandler,
+    TakeRestHandler,
+    WaitingOrdersHandler,
+)
 from majority_bot.tg_communication import send_messages_soon
 from majority_bot.translate import gettext, set_active
 
@@ -40,7 +47,6 @@ STATE_TO_HANDLER = {
     'language': SetLanguageHandler,
     'location': SetLocationHandler,
     'personal-task': PersonalTaskHandler,
-
     'take-rest': TakeRestHandler,
     'waiting-orders': WaitingOrdersHandler,
 }
@@ -57,7 +63,7 @@ async def get_handler(user: User, message: Message) -> 'majority_bot.handlers.Ba
     return STATE_TO_HANDLER[db_user.get('state')](db_user)
 
 
-def init():
+async def init():
     app = web.Application()
 
     app.router.add_post('/bot/test/user/', bot_test_entry_point)

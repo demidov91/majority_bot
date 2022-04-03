@@ -98,7 +98,7 @@ class TakeRestHandler(BaseHandler):
     greeting = gettext_lazy('Push the button to return')
     options = gettext_lazy('Return')
 
-    def handle(self, user: User, message: Message):
+    async def handle(self, user: User, message: Message):
         await connection()['users'].update_one({'tg_id': self.db_user['tg_id']}, {'active': True})
         self.next_state = 'personal-task'
         return await get_tg_active_messages(self.db_user)
