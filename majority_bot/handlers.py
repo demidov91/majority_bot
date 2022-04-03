@@ -39,7 +39,10 @@ class SetLanguageHandler:
         else:
             raise UnexpectedResponseError()
 
-        await connection()['users'].update_one({'tg_id': user.id}, {'language': lang})
+        await connection()['users'].update_one(
+            {'tg_id': user.id},
+            {'$set': {'language': lang}},
+        )
 
 
 class SetLocationHandler(BaseHandler):
@@ -57,7 +60,10 @@ class SetLocationHandler(BaseHandler):
         else:
             raise UnexpectedResponseError()
 
-        await connection()['users'].update_one({'tg_id': user.id}, {'location': location})
+        await connection()['users'].update_one(
+            {'tg_id': user.id},
+            {'$set': {'location': location}},
+        )
 
         return await get_tg_active_messages(self.db_user)
 
@@ -90,7 +96,10 @@ class PersonalTaskHandler(BaseHandler):
             }
 
         if message_contains(message, 'адпачынак', 'отдых'):
-            await connection().update_one({'tg_id': self.db_user['tg_id']}, {'active': False})
+            await connection().update_one(
+                {'tg_id': self.db_user['tg_id']},
+                {'$set': {'active': False}},
+            )
             self.next_state = 'take-rest'
 
 
@@ -99,7 +108,10 @@ class TakeRestHandler(BaseHandler):
     options = gettext_lazy('Return')
 
     async def handle(self, user: User, message: Message):
-        await connection()['users'].update_one({'tg_id': self.db_user['tg_id']}, {'active': True})
+        await connection()['users'].update_one(
+            {'tg_id': self.db_user['tg_id']},
+            {'$set': {'active': True}},
+        )
         self.next_state = 'personal-task'
         return await get_tg_active_messages(self.db_user)
 
@@ -118,7 +130,10 @@ class CommandHandler(BaseHandler):
     async def handle(self, user: User, message: Message):
         if message.text == '/start':
             if self.db_user is not None:
-                await connection()['users'].update_one({'tg_id': user.id}, {'location': None, 'language': None})
+                await connection()['users'].update_one(
+                    {'tg_id': user.id},
+                    {'$set': {'location': None, 'language': None}},
+                )
 
             else:
                 await connection()['users'].insert_one({
