@@ -116,7 +116,7 @@ class PersonalTaskHandler(BaseHandler):
 
 class TakeRestHandler(BaseHandler):
     greeting = gettext_lazy('Push the button to return')
-    options = gettext_lazy('Return')
+    options = [gettext_lazy('Return')]
 
     async def handle(self, user: User, message: Message):
         await connection()['users'].update_one(
