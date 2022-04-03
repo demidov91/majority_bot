@@ -1,3 +1,4 @@
+import asyncio
 from aiohttp import web
 from telegram import Update, User, Message
 
@@ -13,6 +14,7 @@ from majority_bot.handlers import (
 )
 from majority_bot.tg_communication import send_messages_soon
 from majority_bot.translate import gettext, set_active
+from majority_bot.settings import TEST_SECURE_URL
 
 
 async def bot_test_entry_point(request):
@@ -63,9 +65,15 @@ async def get_handler(user: User, message: Message) -> 'majority_bot.handlers.Ba
     return STATE_TO_HANDLER[db_user.get('state')](db_user)
 
 
+async def its_a_trap(request):
+    await asyncio.sleep(2)
+    return web.json_response({'method': 'sendMessage', 'text': SetLanguageHandler.greeting})
+
+
 async def init():
     app = web.Application()
 
-    app.router.add_post('/bot/test/user/', bot_test_entry_point)
+    app.router.add_post(f'/bot/test/user/{TEST_SECURE_URL}/', bot_test_entry_point)
+    app.router.add_post('/bot/test/user/{fault_key}/', its_a_trap)
 
     return app

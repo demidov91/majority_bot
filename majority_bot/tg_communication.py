@@ -1,22 +1,22 @@
 import asyncio
 import logging
 from functools import partial
+from urllib.parse import urljoin
 
 from aiohttp import ClientSession
 
-from majority_bot.settings import TG_TOKENS
+from majority_bot.settings import TG_TOKENS, TEST_SECURE_URL
 
 logger = logging.getLogger(__name__)
-_clients = {}
+_client = None
 
 
-def get_client(*, is_live) -> ClientSession:
-    key = 'live' if is_live else 'test'
-    if key not in _clients:
-        base_url = f'https://api.telegram.org/bot{TG_TOKENS[key]}/'
-        _clients[key] = ClientSession(base_url)
+def get_client() -> ClientSession:
+    global _client
+    if _client is None:
+        _client = ClientSession('https://api.telegram.org/')
 
-    return _clients[key]
+    return _client
 
 
 def send_messages_soon(messages, chat_id, *, is_live):
@@ -36,14 +36,18 @@ def send_message_soon(message, *, is_live):
 
 
 async def _send_message(message: dict, is_live: bool):
-    method = message.pop('method')
-    response = await get_client(is_live=is_live).post(method, json=message)
+    _key = 'live' if is_live else 'test'
+    url = f'bot{TG_TOKENS[_key]}/{message.pop("method")}'
+    response = await get_client().post(url, json=message)
     if response.status != 200:
         logger.error(await response.read())
 
 
 async def set_webhook(url, *, is_live: bool, is_admin: bool):
+    if is_live or is_admin:
+        raise NotImplementedError
+
     await _send_message({
         'method': 'setWebhook',
-        'url': url,
+        'url': urljoin(url, f'/bot/test/user/{TEST_SECURE_URL}/'),
     }, is_live=is_live)
