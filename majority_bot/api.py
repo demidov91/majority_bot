@@ -35,7 +35,7 @@ async def root_handler(request, *, is_live: bool):
     if not tg_update.effective_user:
         return {}
 
-    handler = await get_handler(tg_update.effective_user.id, tg_update.message)
+    handler = await get_handler(tg_update.effective_user, tg_update.message)
     try:
         messages = await handler.handle(tg_update.effective_user, tg_update.message)
     except UnexpectedResponseError:
