@@ -8,10 +8,16 @@ def build_message(text, options):
     }
     if options:
         if len(options) < 3:
-            data['reply_markup'] = [[{'text': x} for x in options]]
+            keyboard = [[{'text': x} for x in options]]
 
         else:
-            data['reply_markup'] = [[{'text': x}] for x in options]
+            keyboard = [[{'text': x}] for x in options]
+
+        data['reply_markup'] = {
+            'keyboard': keyboard,
+            'resize_keyboard': True,
+            'one_time_keyboard': True,
+        }
 
     return data
 
