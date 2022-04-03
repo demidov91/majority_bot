@@ -36,7 +36,7 @@ def send_messages_soon(messages, chat_id, *, is_live):
 
 
 def send_message_soon(message, *, is_live):
-    asyncio.get_event_loop().call_soon(partial(_send_message, message, is_live=is_live))
+    asyncio.create_task(_send_message(message, is_live=is_live))
 
 
 async def _send_message(message: dict, is_live: bool):
