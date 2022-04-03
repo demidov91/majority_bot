@@ -34,5 +34,5 @@ async def get_tg_user(user_id: int):
 
 
 async def get_active_messages(location: str, language: str):
-    record = await connection()['tasks'].find_one({'location': location, 'language': language}, sort={'created_at': DESCENDING})
+    record = await connection()['tasks'].find_one({'location': location, 'language': language}, sort=[('created_at', DESCENDING)])
     return record and record.get('data')

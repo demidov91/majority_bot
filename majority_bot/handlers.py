@@ -41,10 +41,10 @@ class SetLanguageHandler(BaseHandler):
     next_state = 'location'
 
     async def handle(self, user: User, message: Message):
-        if 'беларуская' in message.text.lower():
+        if message_contains(message, 'беларуская', '1'):
             lang = 'be'
 
-        elif 'русский' in message.text.lower():
+        elif message_contains(message, 'русский', '2'):
             lang = 'ru'
 
         else:
@@ -62,10 +62,10 @@ class SetLocationHandler(BaseHandler):
     next_state = 'personal-task'
 
     async def handle(self, user: User, message: Message):
-        if message_contains(message, 'мяжой', 'граніцей'):
+        if message_contains(message, 'мяжой', 'граніцей', '2'):
             location = 'out-bel'
 
-        elif message_contains(message, 'беларус'):
+        elif message_contains(message, 'у беларусі', '1'):
             location = 'in-bel'
 
         else:
@@ -88,7 +88,7 @@ class PersonalTaskHandler(BaseHandler):
     ]
 
     async def handle(self, user: User, message: Message):
-        if message_contains(message, 'гатова', 'готово'):
+        if message_contains(message, 'гатова', 'готово', '1'):
             conn = connection()
             await conn['activity'].insert_one({
                 'tg_id': user.id,
@@ -98,7 +98,7 @@ class PersonalTaskHandler(BaseHandler):
 
             self.next_state = 'waiting-orders'
 
-        if message_contains(message, 'напісаць камандзе', 'написать команде'):
+        if message_contains(message, 'напісаць камандзе', 'написать команде', '2'):
             self.next_state = 'personal-task'
 
             return {
@@ -106,7 +106,7 @@ class PersonalTaskHandler(BaseHandler):
                 'text': gettext('Here goes information about chat-bot'),
             }
 
-        if message_contains(message, 'адпачынак', 'отдых'):
+        if message_contains(message, 'адпачынак', 'отдых', '3'):
             await connection().update_one(
                 self.user_filter,
                 {'$set': {'active': False}},
