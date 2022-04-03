@@ -70,7 +70,7 @@ async def get_handler(user: User, message: Message) -> 'majority_bot.handlers.Ba
     if db_user is None:
         raise ValueError(user.id)
 
-    return STATE_TO_HANDLER[db_user.get('state')](db_user)
+    return STATE_TO_HANDLER[db_user['state']](db_user)
 
 
 async def its_a_trap(request):

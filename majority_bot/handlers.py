@@ -17,11 +17,22 @@ class BaseHandler:
     def __init__(self, db_user: Optional[dict]):
         self.db_user = db_user
 
-    async def get_greeting(self):
-        return build_message(self.greeting, self.options)
+    @property
+    def user_filter(self):
+        return {'tg_id': self.db_user['tg_id']}
+
+    @classmethod
+    async def get_greeting(cls):
+        return build_message(cls.greeting, cls.options)
 
     async def handle(self, user: User, message: Message):
         raise NotImplementedError
+
+    async def switch_state(self):
+        await connection()['users'].update_one(
+            self.user_filter,
+            {'$set': {'state': self.next_state}},
+        )
 
 
 class SetLanguageHandler(BaseHandler):
@@ -40,7 +51,7 @@ class SetLanguageHandler(BaseHandler):
             raise UnexpectedResponseError()
 
         await connection()['users'].update_one(
-            {'tg_id': user.id},
+            self.user_filter,
             {'$set': {'language': lang}},
         )
 
@@ -61,7 +72,7 @@ class SetLocationHandler(BaseHandler):
             raise UnexpectedResponseError()
 
         await connection()['users'].update_one(
-            {'tg_id': user.id},
+            self.user_filter,
             {'$set': {'location': location}},
         )
 
@@ -97,7 +108,7 @@ class PersonalTaskHandler(BaseHandler):
 
         if message_contains(message, 'адпачынак', 'отдых'):
             await connection().update_one(
-                {'tg_id': self.db_user['tg_id']},
+                self.user_filter,
                 {'$set': {'active': False}},
             )
             self.next_state = 'take-rest'
@@ -109,7 +120,7 @@ class TakeRestHandler(BaseHandler):
 
     async def handle(self, user: User, message: Message):
         await connection()['users'].update_one(
-            {'tg_id': self.db_user['tg_id']},
+            self.user_filter,
             {'$set': {'active': True}},
         )
         self.next_state = 'personal-task'
