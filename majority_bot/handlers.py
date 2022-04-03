@@ -28,11 +28,15 @@ class BaseHandler:
     async def handle(self, user: User, message: Message):
         raise NotImplementedError
 
-    async def switch_state(self):
+    async def update_user(self, set_data):
         await connection()['users'].update_one(
             self.user_filter,
-            {'$set': {'state': self.next_state}},
+            {'$set': set_data},
         )
+        self.db_user.update(set_data)
+
+    async def switch_state(self):
+        await self.update_user({'state': self.next_state})
 
 
 class SetLanguageHandler(BaseHandler):
@@ -50,10 +54,7 @@ class SetLanguageHandler(BaseHandler):
         else:
             raise UnexpectedResponseError()
 
-        await connection()['users'].update_one(
-            self.user_filter,
-            {'$set': {'language': lang}},
-        )
+        await self.update_user({'language': lang})
 
 
 class SetLocationHandler(BaseHandler):
@@ -71,10 +72,7 @@ class SetLocationHandler(BaseHandler):
         else:
             raise UnexpectedResponseError()
 
-        await connection()['users'].update_one(
-            self.user_filter,
-            {'$set': {'location': location}},
-        )
+        await self.update_user({'location': location})
 
         return await get_tg_active_messages(self.db_user)
 
@@ -107,10 +105,7 @@ class PersonalTaskHandler(BaseHandler):
             }
 
         if message_contains(message, 'адпачынак', 'отдых', '3'):
-            await connection()['users'].update_one(
-                self.user_filter,
-                {'$set': {'active': False}},
-            )
+            await self.update_user({'active': False})
             self.next_state = 'take-rest'
 
 
@@ -119,10 +114,7 @@ class TakeRestHandler(BaseHandler):
     options = [gettext_lazy('Return')]
 
     async def handle(self, user: User, message: Message):
-        await connection()['users'].update_one(
-            self.user_filter,
-            {'$set': {'active': True}},
-        )
+        await self.update_user({'active': True})
         self.next_state = 'personal-task'
         return await get_tg_active_messages(self.db_user)
 
@@ -141,10 +133,7 @@ class CommandHandler(BaseHandler):
     async def handle(self, user: User, message: Message):
         if message.text == '/start':
             if self.db_user is not None:
-                await connection()['users'].update_one(
-                    {'tg_id': user.id},
-                    {'$set': {'location': None, 'language': None}},
-                )
+                await self.update_user({'location': None, 'language': None})
 
             else:
                 data = {
