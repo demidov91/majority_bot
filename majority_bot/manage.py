@@ -6,7 +6,7 @@ import logging
 import pymongo
 
 from majority_bot.db import get_connection
-from majority_bot.tg_communication import set_webhook
+from majority_bot.tg_communication import set_webhook, get_webhook
 
 
 async def setup_db(is_live):
@@ -20,7 +20,7 @@ def run():
     logging.basicConfig(level=logging.INFO)
 
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('command', choices=['setup_db', 'set_webhook'])
+    argparser.add_argument('command', choices=['setup_db', 'set_webhook', 'get_webhook'])
     argparser.add_argument('--test', action='store_true')
     argparser.add_argument('--live', action='store_true')
     argparser.add_argument('value', nargs='?')
@@ -35,6 +35,11 @@ def run():
 
     if args.command == 'set_webhook':
         data = asyncio.run(set_webhook(args.value, is_live=is_live, is_admin=False))
+        print(data)
+        return
+
+    if args.command == 'get_webhook':
+        data = asyncio.run(get_webhook(is_live=is_live, is_admin=False))
         print(data)
         return
 

@@ -67,3 +67,14 @@ async def set_webhook(url, *, is_live: bool, is_admin: bool):
     }, is_live=is_live)
 
     return data
+
+
+async def get_webhook(*, is_live: bool, is_admin: bool):
+    if is_live or is_admin:
+        raise NotImplementedError
+
+    data = await _send_message({
+        'method': 'getWebhookInfo',
+    }, is_live=is_live)
+
+    return data
