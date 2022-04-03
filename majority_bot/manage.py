@@ -22,7 +22,7 @@ def run():
     argparser.add_argument('command', choices=['setup_db', 'set_handler'])
     argparser.add_argument('--test', action='store_true')
     argparser.add_argument('--live', action='store_true')
-    argparser.add_argument('value')
+    argparser.add_argument('value', nargs='?')
 
     args = argparser.parse_args()
 
