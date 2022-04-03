@@ -1,0 +1,4 @@
+aiohttp
+speaklater
+python-telegram-bot
+motor

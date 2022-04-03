@@ -1,0 +1,2 @@
+class UnexpectedResponseError(Exception):
+    pass
