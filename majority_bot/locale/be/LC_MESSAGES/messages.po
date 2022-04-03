@@ -23,7 +23,7 @@ msgstr "За мяжой"
 #: majority_bot/handlers.py:83
 msgid "Choose button or a number."
 msgstr "✅ Выберыце кнопку ці напішыце лічбу:\n"
-        "1— Гатова"
+        "1— Гатова\n"
         "2— Напісаць камандзе\n"
         "3— Узяць адпачынак\n"
 

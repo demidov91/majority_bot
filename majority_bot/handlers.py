@@ -107,7 +107,7 @@ class PersonalTaskHandler(BaseHandler):
             }
 
         if message_contains(message, 'адпачынак', 'отдых', '3'):
-            await connection().update_one(
+            await connection()['users'].update_one(
                 self.user_filter,
                 {'$set': {'active': False}},
             )
