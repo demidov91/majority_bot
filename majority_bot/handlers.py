@@ -147,14 +147,16 @@ class CommandHandler(BaseHandler):
                 )
 
             else:
-                await connection()['users'].insert_one({
+                data = {
                     'tg_id': user.id,
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'tg_username': user.username,
                     'chat_id': message.chat_id,
                     'state': None,
-                })
+                }
+                await connection()['users'].insert_one(data)
+                self.db_user = data
 
 
 async def get_tg_active_messages(db_user: dict):
