@@ -61,14 +61,14 @@ STATE_TO_HANDLER = {
 
 
 async def get_handler(user: User, message: Message) -> 'majority_bot.handlers.BaseHandler':
-    if message.text is not None and message.text.startswith('/') and message.text[1:] in CommandHandler.expected:
-        return CommandHandler(None)
-
     db_user = await get_tg_user(user.id)
+    set_active(db_user and db_user.get('language'))
+
+    if message.text is not None and message.text.startswith('/') and message.text[1:] in CommandHandler.expected:
+        return CommandHandler(db_user)
+
     if db_user is None:
         raise ValueError(user.id)
-
-    set_active(db_user.get('language'))
 
     return STATE_TO_HANDLER[db_user.get('state')](db_user)
 
