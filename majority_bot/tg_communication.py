@@ -61,7 +61,7 @@ async def set_webhook(url, *, is_live: bool, is_admin: bool):
 
     data = await _send_message({
         'method': 'setWebhook',
-        'url': urljoin(url, f'/bot/test/user/{TEST_SECURE_URL}'),
+        'url': urljoin(url, f'/bot/test/user/{TEST_SECURE_URL}/'),
     }, is_live=is_live)
 
     return data

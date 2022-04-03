@@ -1,4 +1,6 @@
 import asyncio
+import logging
+
 from aiohttp import web
 from telegram import Update, User, Message
 
@@ -16,18 +18,22 @@ from majority_bot.tg_communication import send_messages_soon
 from majority_bot.translate import gettext, set_active
 from majority_bot.settings import TEST_SECURE_URL
 
+logger = logging.getLogger(__name__)
+
 
 async def bot_test_entry_point(request):
     set_active_connection(is_live=False)
-    return web.json_response(await root_handler(request, is_live=False))
+    try:
+        return web.json_response(await root_handler(request, is_live=False))
+    except:
+        logger.exception('Unexpected error is silenced.')
+        return web.Response()
 
 
 async def root_handler(request, *, is_live: bool):
     tg_update = Update.de_json(await request.json(), None)
     if not tg_update.effective_user:
         return {}
-
-    set_active(tg_update.effective_user.language_code)
 
     handler = await get_handler(tg_update.effective_user.id, tg_update.message)
     try:
@@ -62,6 +68,8 @@ async def get_handler(user: User, message: Message) -> 'majority_bot.handlers.Ba
     if db_user is None:
         raise ValueError(user.id)
 
+    set_active(db_user.get('language'))
+
     return STATE_TO_HANDLER[db_user.get('state')](db_user)
 
 
@@ -71,6 +79,8 @@ async def its_a_trap(request):
 
 
 async def init():
+    logging.basicConfig(level=logging.DEBUG)
+
     app = web.Application()
 
     app.router.add_post(f'/bot/test/user/{TEST_SECURE_URL}/', bot_test_entry_point)
