@@ -1,16 +1,16 @@
 import os
 import gettext as native_gettext
 from contextvars import ContextVar
+from json import JSONEncoder
 from typing import Optional
 
-from speaklater import make_lazy_gettext
-
+from speaklater import make_lazy_gettext, _LazyString
 
 BASE_DIR = os.path.dirname(__file__)
 DEFAULT_LANGUAGE = 'be'
 AVAILABLE_LANGUAGES = ['ru', 'be']
 
-_active_language = ContextVar('active_language')
+_active_language = ContextVar('active_language', default=DEFAULT_LANGUAGE)
 _translations = {}
 
 
@@ -22,7 +22,7 @@ def set_active(language: Optional[str]):
 
 
 def get_active():
-    return _active_language.get() or DEFAULT_LANGUAGE
+    return _active_language.get()
 
 
 def get_translation(language_code: str):
@@ -39,3 +39,11 @@ def gettext(text):
 
 
 gettext_lazy = make_lazy_gettext(lambda: gettext)
+
+
+class LazyAwareJsonEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, _LazyString):
+            return str(o)
+
+        return super().encode(o)

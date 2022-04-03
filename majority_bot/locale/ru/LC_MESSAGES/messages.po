@@ -1,0 +1,47 @@
+#: majority_bot/api.py:44
+msgid "Unexpected Response"
+msgstr ""
+
+#: majority_bot/handlers.py:60
+msgid "Where are you located?"
+msgstr ""
+
+#: majority_bot/handlers.py:61
+msgid "In Belarus"
+msgstr ""
+
+#: majority_bot/handlers.py:61
+msgid "Abroad"
+msgstr ""
+
+#: majority_bot/handlers.py:83
+msgid "Choose button or a number."
+msgstr ""
+
+#: majority_bot/handlers.py:85
+msgid "1 - Ready"
+msgstr ""
+
+#: majority_bot/handlers.py:86
+msgid "2 - Contact us"
+msgstr ""
+
+#: majority_bot/handlers.py:87
+msgid "3 - Take a rest"
+msgstr ""
+
+#: majority_bot/handlers.py:106
+msgid "Here goes information about chat-bot"
+msgstr ""
+
+#: majority_bot/handlers.py:118
+msgid "Push the button to return"
+msgstr ""
+
+#: majority_bot/handlers.py:119
+msgid "Return"
+msgstr ""
+
+#: majority_bot/handlers.py:134
+msgid "Thank you for your activity."
+msgstr ""

@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 from functools import partial
 from urllib.parse import urljoin
@@ -6,13 +7,14 @@ from urllib.parse import urljoin
 from aiohttp import ClientSession
 
 from majority_bot.settings import TG_TOKENS, TEST_SECURE_URL
+from majority_bot.translate import LazyAwareJsonEncoder
 
 logger = logging.getLogger(__name__)
 _client = None
 
 
 def create_client():
-    return ClientSession('https://api.telegram.org')
+    return ClientSession('https://api.telegram.org', json_serialize=partial(json.dumps, cls=LazyAwareJsonEncoder))
 
 
 def get_client() -> ClientSession:
