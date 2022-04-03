@@ -10,8 +10,8 @@ from majority_bot.tg_communication import set_webhook
 async def setup_db(is_live):
     connection = get_connection(is_live=is_live)
     await connection['users'].create_index('tg_id', unique=True)
-    await connection['tasks'].create_index([('language', pymongo.ASCENDING), ('location', pymongo.DESCENDING)])
-    await connection['tasks'].create_index(('created_at', pymongo.DESCENDING))
+    await connection['tasks'].create_index([('language', pymongo.ASCENDING), ('location', pymongo.ASCENDING)])
+    await connection['tasks'].create_index([('created_at', pymongo.DESCENDING)])
 
 
 async def set_handler(url, *, is_live):
