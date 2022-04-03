@@ -11,7 +11,7 @@ from majority_bot.translate import gettext_lazy, gettext
 
 class BaseHandler:
     greeting: Optional[str]
-    options: Optional[list]
+    options: Optional[list] = None
     next_state: Optional[str]
 
     def __init__(self, db_user: Optional[dict]):

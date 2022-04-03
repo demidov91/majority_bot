@@ -16,7 +16,6 @@ def build_message(text, options):
         data['reply_markup'] = {
             'keyboard': keyboard,
             'resize_keyboard': True,
-            'one_time_keyboard': True,
         }
 
     return data
