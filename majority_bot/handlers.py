@@ -152,6 +152,8 @@ class CommandHandler(BaseHandler):
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'tg_username': user.username,
+                    'chat_id': message.chat_id,
+                    'state': None,
                 })
 
 
